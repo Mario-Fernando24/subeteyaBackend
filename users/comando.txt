@@ -4,4 +4,6 @@ python3 manage.py runserver
 #instalar bcrypt para encriptar constraseñas
 pip3 install bcrypt
 
+#obtener la ipv4 de mi mac 
+ipconfig getifaddr en0
 
