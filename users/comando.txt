@@ -1,0 +1,7 @@
+#correr proyecto
+python3 manage.py runserver
+
+#instalar bcrypt para encriptar constraseñas
+pip3 install bcrypt
+
+
