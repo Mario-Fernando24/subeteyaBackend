@@ -1,5 +1,8 @@
 #correr proyecto
 python3 manage.py runserver
+#correr proyecto con ipv4
+python3 manage.py runserver 192.168.0.87:3000
+
 
 #instalar bcrypt para encriptar constraseñas
 pip3 install bcrypt

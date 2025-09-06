@@ -1,12 +1,13 @@
+import bcrypt
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
+from users.models import User
 from users.serializers import UserSerializer
 import logging
 
-# Create your views here.
-
+# CREAR USUARIO
 @api_view(['POST'])
 def create(request):
     serializer = UserSerializer(data = request.data)
@@ -26,6 +27,38 @@ def create(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
 
+
+#LOGIN
+@api_view(['POST'])
+def login(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+
+    if not email or not password:
+        return Response({'error': 'Email y la contraseña son obligatorios'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        #obtener usuario por email
+        user = User.objects.get(email=email)
+
+    except User.DoesNotExist:
+        return Response({'error': 'Las credenciales no son validas'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+        user_data = {
+            'id': user.id,
+            'name': user.name,
+            'lastname': user.lastname,
+            'email': user.email,
+            'phone': user.phone,
+            'image': user.image,
+            'notification_token': user.notification_token
+        }
+        #serializer = UserSerializer(user_data)
+        return Response(user_data, status=status.HTTP_200_OK)
+    else:    
+        return Response({'error': 'Las credenciales no son validas'}, status=status.HTTP_401_UNAUTHORIZED)
+                        
 
 # 🔹 Nuevo endpoint para listar usuarios
 @api_view(['GET'])
