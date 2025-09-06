@@ -14,3 +14,12 @@ ipconfig getifaddr en0
 pip3 install djangorestframework-simplejwt
 
 
+# crear una nueva app
+python3 manage.py startapp authentication
+
+# migrar un modelo a bd
+python3 manage.py migrate
+python3 manage.py migrate
+
+
+
