@@ -6,7 +6,7 @@ from rest_framework import status
 from users.models import User
 from users.serializers import UserSerializer
 import logging
-
+from rest_framework_simplejwt.tokens import RefreshToken    
 # CREAR USUARIO
 @api_view(['POST'])
 def create(request):
@@ -45,14 +45,23 @@ def login(request):
         return Response({'error': 'Las credenciales no son validas'}, status=status.HTTP_401_UNAUTHORIZED)
     
     if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+         
+        refresh = RefreshToken.for_user(user)
+
+        access_token = str(refresh.access_token)     
+
         user_data = {
+            "user": {   
             'id': user.id,
             'name': user.name,
             'lastname': user.lastname,
             'email': user.email,
             'phone': user.phone,
             'image': user.image,
-            'notification_token': user.notification_token
+            'notification_token': user.notification_token,
+            },
+            'access_token': 'Bearer '+ access_token   
+
         }
         #serializer = UserSerializer(user_data)
         return Response(user_data, status=status.HTTP_200_OK)

@@ -10,3 +10,7 @@ pip3 install bcrypt
 #obtener la ipv4 de mi mac 
 ipconfig getifaddr en0
 
+#CREAR TOKEN JWT
+pip3 install djangorestframework-simplejwt
+
+
