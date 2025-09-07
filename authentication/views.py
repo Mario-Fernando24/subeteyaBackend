@@ -55,8 +55,6 @@ def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
 
-
-
     if not email or not password:
         return Response({
             'message': 'Email y la contraseña son obligatorios',
@@ -79,6 +77,11 @@ def login(request):
 
         access_token = str(refresh.access_token)     
 
+         # Obtener y asignar los roles del usuario
+        roles = Role.objects.filter(userhasrole__id_user=user)
+        # marshall the roles
+        roles_serializer = RoleSerializer(roles, many=True)
+
         user_data = {
             "user": {   
             'id': user.id,
@@ -88,6 +91,7 @@ def login(request):
             'phone': user.phone,
             'image': user.image,
             'notification_token': user.notification_token,
+            'roles': roles_serializer.data
             },
             'access_token': 'Bearer '+ access_token   
 
