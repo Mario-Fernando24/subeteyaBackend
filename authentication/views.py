@@ -1,28 +1,39 @@
 import bcrypt
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
-from users.models import User
+from roles.models import Role
+from roles.serializers import RoleSerializer
+from users.models import User, UserHasRole
 from users.serializers import UserSerializer
 import logging
-from rest_framework_simplejwt.tokens import RefreshToken    
+from rest_framework_simplejwt.tokens import RefreshToken  
+
 # CREAR USUARIO
 @api_view(['POST'])
 def register(request):
+
     serializer = UserSerializer(data = request.data)
 
-    if request.method == 'POST':
-        logging.debug("Este es un log de depuración")
-        logging.info("Este es un log de información")
-        logging.warning("Este es un log de advertencia")
-        logging.error("Este es un log de error")
-        logging.critical("Este es un log crítico")
-
     if serializer.is_valid():
-        serializer.save()
+
+        user=serializer.save()
+
+        client_role =get_object_or_404(Role, id='CLIENTE')
+        # Asignar el rol de cliente al usuario
+        UserHasRole.objects.create(id_user = user, id_role=client_role)
+        # Obtener y asignar los roles del usuario
+        roles = Role.objects.filter(userhasrole__id_user=user)
+        # marshall the roles
+        roles_serializer = RoleSerializer(roles, many=True)
+
+        response_data = {
+            **serializer.data,
+            'roles': roles_serializer.data
+        }
     
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(response_data, status=status.HTTP_201_CREATED)
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
