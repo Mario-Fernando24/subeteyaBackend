@@ -35,7 +35,17 @@ def register(request):
     
         return Response(response_data, status=status.HTTP_201_CREATED)
     
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    error_message = []
+    for field, errors in serializer.errors.items():
+            for error in errors:
+                error_message.append(f"{field}: {error}")   
+
+    error_response = {
+            "message": error_message,
+            "statusCode": status.HTTP_400_BAD_REQUEST
+   }        
+
+    return Response(error_response, status=status.HTTP_400_BAD_REQUEST)
  
 
 
@@ -45,15 +55,23 @@ def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
 
+
+
     if not email or not password:
-        return Response({'error': 'Email y la contraseña son obligatorios'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            'message': 'Email y la contraseña son obligatorios',
+            'statusCode': status.HTTP_400_BAD_REQUEST
+            }, status=status.HTTP_400_BAD_REQUEST)
     
     try:
         #obtener usuario por email
         user = User.objects.get(email=email)
 
     except User.DoesNotExist:
-        return Response({'error': 'Las credenciales no son validas'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({
+            'message': 'Las credenciales no son validas',
+            'statusCode': status.HTTP_401_UNAUTHORIZED
+            }, status=status.HTTP_401_UNAUTHORIZED)
     
     if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
          
@@ -77,6 +95,6 @@ def login(request):
         #serializer = UserSerializer(user_data)
         return Response(user_data, status=status.HTTP_200_OK)
     else:    
-        return Response({'error': 'Las credenciales no son validas'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response({'message': 'Las credenciales no son validas','statusCode':status.HTTP_401_UNAUTHORIZED}, status=status.HTTP_401_UNAUTHORIZED)
                         
 
