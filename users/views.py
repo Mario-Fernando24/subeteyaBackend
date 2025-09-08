@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from roles.models import Role
 from roles.serializers import RoleSerializer
+from subeteyabackend.settings import GLOBAL_HOST, GLOBAL_IP
 from users.models import User
 from rest_framework import status
 from django.core.files.storage import default_storage
@@ -11,11 +12,18 @@ from django.core.files.base import ContentFile
 import os
 import uuid
 from django.utils.text import get_valid_filename
+import logging
 
 # CREAR USUARIO
 @api_view(['PUT'])
+
 @permission_classes([IsAuthenticated])
 def update(request, id_user):
+    if str(request.user.id) != str(id_user):
+        return Response({
+                'message': 'No tienes permiso para actualizar este usuario',
+                'statusCode': status.HTTP_403_FORBIDDEN
+                }, status=status.HTTP_403_FORBIDDEN)   
 
     try:
         user = User.objects.get(id=id_user)
@@ -58,19 +66,26 @@ def update(request, id_user):
             'lastname': user.lastname,
             'email': user.email,
             'phone': user.phone,
-            'image': user.image,
+            'image': f'http://{GLOBAL_IP}:{GLOBAL_HOST}'+ user.image if user.image else None,
             'notification_token': user.notification_token,
             'roles': roles_serializer.data
             },
         }
     return Response(user_data, status=status.HTTP_200_OK)
 
-
+ 
 
 # ACTUALIZAR IMAGEN DE USUARIO
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def updateWithImage(request, id_user):
+
+
+    if str(request.user.id) != str(id_user):
+        return Response({
+                'message': 'No tienes permiso para actualizar este usuario',
+                'statusCode': status.HTTP_403_FORBIDDEN
+                }, status=status.HTTP_403_FORBIDDEN)   
 
     try:
         user = User.objects.get(id=id_user)
@@ -130,7 +145,7 @@ def updateWithImage(request, id_user):
             'lastname': user.lastname,
             'email': user.email,
             'phone': user.phone,
-            'image': user.image,
+            'image': f'http://{GLOBAL_IP}:{GLOBAL_HOST}'+ user.image if user.image else None,
             'notification_token': user.notification_token,
             'roles': roles_serializer.data
             },
