@@ -138,8 +138,7 @@ def updateWithImage(request, id_user):
     roles = Role.objects.filter(userhasrole__id_user=user)
     roles_serializer = RoleSerializer(roles, many=True)
 
-    user_data = {
-            "user": {   
+    user_data = {  
             'id': user.id,
             'name': user.name,
             'lastname': user.lastname,
@@ -148,6 +147,62 @@ def updateWithImage(request, id_user):
             'image': f'http://{GLOBAL_IP}:{GLOBAL_HOST}'+ user.image if user.image else None,
             'notification_token': user.notification_token,
             'roles': roles_serializer.data
-            },
         }
     return Response(user_data, status=status.HTTP_200_OK)
+
+
+#OBTENER USUARIO POR ID
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getUserById(request, id_user):
+    try:
+        user = User.objects.get(id=id_user)
+    except User.DoesNotExist:
+        return Response({
+                'message': 'Usuario no encontrado',
+                'statusCode': status.HTTP_404_NOT_FOUND
+                }, status=status.HTTP_404_NOT_FOUND)
+
+    roles = Role.objects.filter(userhasrole__id_user=user)
+    roles_serializer = RoleSerializer(roles, many=True)
+
+    user_data = {
+        'id': user.id,
+        'name': user.name,
+        'lastname': user.lastname,
+        'email': user.email,
+        'phone': user.phone,
+        'image': f'http://{GLOBAL_IP}:{GLOBAL_HOST}'+ user.image if user.image else None,
+        'notification_token': user.notification_token,
+        'roles': roles_serializer.data
+        }
+    return Response(user_data, status=status.HTTP_200_OK)
+
+
+
+
+#OBTENER TODOS LOS USUARIOS
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getAllUsers(request):
+    # Obtener todos los usuarios
+    users = User.objects.all()
+    users_list = []
+
+    for user in users:
+        roles = Role.objects.filter(userhasrole__id_user=user)
+        roles_serializer = RoleSerializer(roles, many=True)
+
+        user_data = {
+            'id': user.id,
+            'name': user.name,
+            'lastname': user.lastname,
+            'email': user.email,
+            'phone': user.phone,
+            'image': f'http://{GLOBAL_IP}:{GLOBAL_HOST}'+ user.image if user.image else None,
+            'notification_token': user.notification_token,
+            'roles': roles_serializer.data
+        }
+        users_list.append(user_data)
+
+    return Response(users_list, status=status.HTTP_200_OK)
