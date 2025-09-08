@@ -38,9 +38,17 @@ def register(request):
         # marshall the roles
         roles_serializer = RoleSerializer(roles, many=True)
 
+        refresh = getCustomTokenForUser(user)
+
+        access_token = str(refresh.access_token)     
+
+
         response_data = {
-            **serializer.data,
-            'roles': roles_serializer.data
+            "user": {
+                **serializer.data,
+                'roles': roles_serializer.data
+            },
+            'access_token': 'Bearer '+ access_token
         }
     
         return Response(response_data, status=status.HTTP_201_CREATED)
