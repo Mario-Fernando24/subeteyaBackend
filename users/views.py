@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated      
 from rest_framework.response import Response
 from roles.models import Role
 from roles.serializers import RoleSerializer
@@ -13,6 +14,7 @@ from django.utils.text import get_valid_filename
 
 # CREAR USUARIO
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def update(request, id_user):
 
     try:
@@ -67,6 +69,7 @@ def update(request, id_user):
 
 # ACTUALIZAR IMAGEN DE USUARIO
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def updateWithImage(request, id_user):
 
     try:

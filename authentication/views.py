@@ -9,9 +9,19 @@ from users.models import User, UserHasRole
 from users.serializers import UserSerializer
 import logging
 from rest_framework_simplejwt.tokens import RefreshToken  
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny  
+
+def getCustomTokenForUser(user):
+    refresh_token = RefreshToken.for_user(user)
+    del refresh_token.payload['user_id']
+    refresh_token.payload['id'] = str(user.id)
+    refresh_token.payload['name'] = str(user.name)
+    return refresh_token   # 👈 no lo conviertas a string aquí
 
 # CREAR USUARIO
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
 
     serializer = UserSerializer(data = request.data)
@@ -48,9 +58,9 @@ def register(request):
     return Response(error_response, status=status.HTTP_400_BAD_REQUEST)
  
 
-
 #LOGIN
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
@@ -73,7 +83,7 @@ def login(request):
     
     if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
          
-        refresh = RefreshToken.for_user(user)
+        refresh = getCustomTokenForUser(user)
 
         access_token = str(refresh.access_token)     
 
