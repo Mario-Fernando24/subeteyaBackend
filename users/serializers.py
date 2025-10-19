@@ -11,11 +11,10 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {'write_only': True}
         }
     #donde se almacena la lógica de creación
-    def create(self, validate_data):
-        raw_password = validate_data.pop('password')
+
+    def create(self, validated_data):
+        raw_password = validated_data.pop('password')
         hashed = bcrypt.hashpw(raw_password.encode('utf-8'), bcrypt.gensalt())
-        validate_data['password'] = hashed.decode('utf-8')  
-        # accediendo a los objetos del modelo users
-        # ** transforma el json en argumento
-        user = User.objects.create(**validate_data)
+        validated_data['password'] = hashed.decode('utf-8')  
+        user = User.objects.create(**validated_data)
         return user

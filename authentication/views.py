@@ -1,3 +1,4 @@
+from venv import logger
 import bcrypt
 from django.shortcuts import get_object_or_404, render
 from rest_framework.response import Response
@@ -7,7 +8,6 @@ from roles.models import Role
 from roles.serializers import RoleSerializer
 from users.models import User, UserHasRole
 from users.serializers import UserSerializer
-import logging
 from rest_framework_simplejwt.tokens import RefreshToken  
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny  
@@ -73,6 +73,9 @@ def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
 
+
+    logger.warning("Esto es warning MARIO")
+    
     if not email or not password:
         return Response({
             'message': 'Email y la contraseña son obligatorios',
@@ -82,18 +85,23 @@ def login(request):
     try:
         #obtener usuario por email
         user = User.objects.get(email=email)
+        logger.warning("LLEGO AQUI")
 
     except User.DoesNotExist:
         return Response({
             'message': 'Las credenciales no son validas',
             'statusCode': status.HTTP_401_UNAUTHORIZED
             }, status=status.HTTP_401_UNAUTHORIZED)
-    
+    logger.warning("00000000000000000")
+
+
     if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-         
+        logger.warning("11111111111111111111")
+
         refresh = getCustomTokenForUser(user)
 
         access_token = str(refresh.access_token)     
+        logger.warning(access_token)
 
          # Obtener y asignar los roles del usuario
         roles = Role.objects.filter(userhasrole__id_user=user)

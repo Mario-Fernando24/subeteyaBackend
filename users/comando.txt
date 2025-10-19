@@ -23,3 +23,7 @@ python3 manage.py migrate
 
 
 
+injectar 
+flutter packages pub run build_runner build
+
+
