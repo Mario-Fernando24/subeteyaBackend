@@ -16,7 +16,7 @@ pip3 install djangorestframework-simplejwt
 
 # crear una nueva app
 python3 manage.py startapp authentication
-
+python3 manage.py startapp  socketio_app
 # migrar un modelo a bd
 python3 manage.py migrate
 python3 manage.py migrate
@@ -37,6 +37,34 @@ git checkout -b feature/google-maps
 
 # 4. (Opcional) Sube la nueva rama al repositorio remoto
 git push -u origin feature/google-maps
+
+
+
+-------------------------------------------------------------------------------------------------------
+✅ Si estás en Mac, te recomiendo usar pip3:
+pip3 install channels channels-redis python-socketio
+
+✅ IMPORTANTE
+
+Si aún no tienes Redis instalado en Mac:
+
+brew install redis
+brew services start redis
+
+
+Verificar que está activo:
+
+redis-cli ping
+
+
+Debería responder:
+
+PONG
+
+daphne -p 8000 subeteyabackend.asgi:application
+daphne -p 8000 subeteyabackend.asgi:application
+
+
 
 
 

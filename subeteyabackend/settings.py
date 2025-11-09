@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'channels',
     'users',
     'authentication',
     'roles'
@@ -76,8 +77,10 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'subeteyabackend.wsgi.application'
-
+# ESTE ES PARA CONFIGURAR EL SERVIDOR DE APLICACIONES
+WSGI_APPLICATION = 'subeteyabackend.wsgi.application' # WEBSERVER GATEWAY INTERFACE CREA UN PUENTE ENTRE EL SERVIDOR WEB Y UN SERVIDOR DE APLICACIONES PYTHON
+#ESTO PERMITE QUE LAS APLICACIONES WEB ESCRITAS EN PYTHON SE COMUNIQUEN CON SERVIDORES WEB COMO APACHE O NGINX
+ASGI_APPLICATION = 'subeteyabackend.asgi.application' # ASYNC SERVER GATEWAY INTERFACE PARA APLICACIONES ASINCRONAS 
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -133,6 +136,18 @@ SIMPLE_JWT = {
     #'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
     #'USER_ID_FIELD': 'id',
     #'USER_ID_CLAIM': 'user_id',         
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        # esto es para usar redis como broker de mensajes
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            #'hosts': [(GLOBAL_IP, GLOBAL_HOST)], 
+            'hosts': [('127.0.0.1', 6379)],
+        }
+
+    },
 }
 
 

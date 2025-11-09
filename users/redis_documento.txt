@@ -1,0 +1,125 @@
+📘 DOCUMENTO: INTRODUCCIÓN A REDIS
+
+✅ ¿Qué es Redis?
+Redis es una base de datos en memoria extremadamente rápida, utilizada para guardar datos temporales o en tiempo real. 
+Su nombre significa: Remote Dictionary Server. 
+Redis guarda información en RAM, por eso es mucho más rápido que bases como MySQL o PostgreSQL.
+
+✅ ¿Para qué sirve Redis?
+Redis es ideal para aplicaciones que necesitan velocidad y tiempo real:
+- Chats en vivo
+- WebSockets (Django Channels, Socket.IO)
+- Contadores en tiempo real
+- Sesiones de usuario
+- Cache rápida
+- Juegos online
+- Notificaciones instantáneas
+- Colas de tareas (Celery, RQ)
+
+Grandes empresas lo usan: Netflix, Uber, Twitter, GitHub, Pinterest, StackOverflow.
+
+✅ ¿Por qué es importante para Django Channels?
+Django Channels permite manejar WebSockets. Redis se usa como intermediario para manejar miles de usuarios sin problemas.
+
+Sin Redis:
+- Pocas conexiones
+- No hay sincronización
+- Problemas al escalar
+
+Con Redis:
+- Múltiples conexiones en tiempo real
+- Salas (rooms)
+- Broadcast a todos los usuarios
+- Escala a producción con múltiples servidores
+#############primordial
+pip3 install daphne
+
+✅ Instalar Redis en macOS
+1. Instalar:
+   brew install redis
+
+2. Iniciar el servicio:
+   brew services start redis
+
+3. Probar que funciona:
+   redis-cli ping
+
+Debe responder:
+   PONG
+
+✅ Cómo abrir Redis y ver la data guardada
+1. Abrir consola de Redis:
+   redis-cli
+
+2. Ver todas las claves:
+   keys *
+
+3. Ver el contenido de una clave:
+   get nombre_clave
+
+4. Ver cuántas claves hay:
+   dbsize
+
+5. Borrar todo (¡cuidado!):
+   flushall
+
+6. Salir:
+   exit
+
+✅ Ejemplos de información guardada en Redis
+
+Tipo de dato / Ejemplo / Cómo se consulta:
+- String: users_online = 10
+  get users_online
+
+- Lista (mensajes de chat):
+  lrange chat:room1 0 -1
+
+- Hash (datos de usuario):
+  hgetall user:22
+
+- Set (usuarios conectados):
+  smembers connected_users
+
+✅ ¿Dónde se usa en una app real?
+En apps con tiempo real como escaneo QR, estadios, o chats:
+- Cuando un usuario se conecta → Redis lo registra
+- Cuando alguien envía mensaje → Redis lo manda a todos
+- Si hay varios servidores → Redis sincroniza la información
+
+✅ Ventajas
+- Ultra rápido
+- Escalable
+- Fácil de usar
+- Compatible con muchos lenguajes (Python, Node, Java, Go, PHP, etc.)
+- Perfecto para tiempo real
+
+✅ Desventajas
+- No reemplaza a una base SQL
+- Si el servidor se apaga, la data puede perderse (a menos que se configure persistencia)
+
+✅ ¿Realmente lo necesito?
+Sí, si tu aplicación:
+- Usa WebSockets
+- Usa Socket.IO
+- Necesita cache rápido
+- Usa colas de tareas
+- Requiere notificaciones en tiempo real
+
+No es obligatorio si tu aplicación solo hace CRUD normal sin tiempo real.
+
+✅ En resumen
+Redis es la herramienta ideal para tiempo real y alta velocidad. 
+Se usa junto con:
+- Django Channels
+- Socket.IO
+- Celery
+- Sistemas de mensajería
+- Apps de monitoreo
+- Juegos y chats
+
+FIN DEL DOCUMENTO ✅
+
+
+----
+redis-server
