@@ -26,4 +26,17 @@ python3 manage.py migrate
 injectar 
 flutter packages pub run build_runner build
 
+# 1. Cambia a la rama main
+git checkout main
+
+# 2. Asegúrate de tener la versión más reciente de main
+git pull origin main
+
+# 3. Crea y cambia a la nueva rama
+git checkout -b feature/google-maps
+
+# 4. (Opcional) Sube la nueva rama al repositorio remoto
+git push -u origin feature/google-maps
+
+
 
