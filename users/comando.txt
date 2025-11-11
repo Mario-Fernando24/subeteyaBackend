@@ -56,15 +56,15 @@ Verificar que está activo:
 
 redis-cli ping
 
-
 Debería responder:
 
 PONG
-
+redis--server
 daphne -p 8000 subeteyabackend.asgi:application
 daphne -p 8000 subeteyabackend.asgi:application
 
-
+#para correr con la ip del wifi 
+daphne -b 192.168.0.87 -p 3000 subeteyabackend.asgi:application
 
 
 
