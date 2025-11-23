@@ -14,33 +14,48 @@ async def connect(sid, environ):
 @sio.event
 async def disconnect(sid):
     print(f"Cliente desconectado: {sid}")
+    await sio.emit('drivers_desconectado', { 'id_socket': sid })
+
 
 @sio.event
 async def message(sid, data):
    print(f'Datos del cliente en socket noooo: {sid}: {data}')
    await sio.emit('new_message', data, to=sid)
 
-
 @sio.event
 async def change_drivers_position(sid, data):
     try:
-        # Si 'data' viene como string JSON -> lo convertimos a dict
-        json_data = json.loads(data) if isinstance(data, str) else data
+        #  Convertimos la data a diccionario
+       # Verificamos en qué formato llegó la información
+        if isinstance(data, dict):
+            # Si ya viene como diccionario → se usa tal cual
+            json_data = data
 
-        print(f'Emitió nueva posición en sockets {sid}: {json_data}')
+        elif isinstance(data, str):
+            # Si viene como texto JSON → lo convertimos a diccionario
+            json_data = json.loads(data)
 
+        else:
+            # Si no es dict ni string, no sabemos procesarlo
+            print(f"Tipo de dato no válido: {type(data)}")
+            return
+
+        # Mostramos lo recibido
+        print(f"Nueva posición recibida de {sid}: {json_data}")
+
+        #  Enviamos la posición a todos los clientes
         await sio.emit(
             'new_drivers_position',
             {
                 'id_socket': sid,
                 'id': json_data["id"],
-                'latitud': json_data["lat"],
-                'longitud': json_data["lng"]
+                'latitud': json_data["latitud"],
+                'longitud': json_data["longitud"]
             }
         )
 
-    except json.JSONDecodeError as e:
-        print(f'ERROR al parsear JSON: {e}')
-    except Exception as e:
-        print(f'ERROR inesperado: {e}')
+    except json.JSONDecodeError:
+        print("Error al convertir JSON")
 
+    except Exception as e:
+        print(f"Error inesperado: {e}")

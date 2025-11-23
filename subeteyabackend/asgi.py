@@ -18,4 +18,5 @@ django_asgi_app = get_asgi_application()
 # Aplicación ASGI combinada:
 # - HTTP -> django_asgi_app
 # - Socket.IO/WebSocket -> manejado por `sio`
+
 application = socketio.ASGIApp(sio, django_asgi_app)
